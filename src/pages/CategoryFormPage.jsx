@@ -3,8 +3,10 @@ import { useParams, Link } from "react-router-dom";
 import HeaderComponent from "../components/HeaderComponent";
 
 function CategoryFormPage() {
-    const { id } = useParams();
-    const [category, setCategory] = useState({ cod: "", nom: "" });
+    const initData = {
+        cod: "",
+        nom: "",
+    };
 
     const categories = [
         { cod: 1, nom: "Horror" },
@@ -14,22 +16,29 @@ function CategoryFormPage() {
         { cod: 5, nom: "Anime" },
     ];
 
-    // Cargar los datos de la categoría al montar el componente
-    useEffect(() => {
-        const selectedCategory = categories.find((cat) => cat.cod === parseInt(id));
+    const { id } = useParams();
+    const [category, setCategory] = useState(initData);
+
+    const onChangeNombreCat = (e) => {
+        const nData = { ...category, nom: e.target.value }; // Corrige "data" por "category"
+        setCategory(nData);
+    };
+
+    const setCategoryForm = (codigo) => {
+        const selectedCategory = categories.find((cat) => cat.cod === parseInt(codigo));
         if (selectedCategory) {
             setCategory(selectedCategory);
         }
-    }, [id]);
-
-    const handleChange = (e) => {
-        setCategory({ ...category, [e.target.name]: e.target.value });
     };
+
+    useEffect(() => {
+        setCategoryForm(id);
+    }, [id]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("Categoría guardada:", category);
-        // Aquí puedes añadir la lógica para guardar los cambios en la base de datos
+        console.log("Enviando:", category);
+        // Aquí puedes agregar la lógica para guardar los cambios en la base de datos
     };
 
     return (
@@ -48,7 +57,7 @@ function CategoryFormPage() {
                             id="inputName"
                             name="nom"
                             value={category.nom}
-                            onChange={handleChange}
+                            onChange={onChangeNombreCat}
                             required
                         />
                     </div>
